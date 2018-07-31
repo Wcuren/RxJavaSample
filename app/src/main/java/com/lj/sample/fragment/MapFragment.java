@@ -48,14 +48,16 @@ public class MapFragment extends Fragment {
         Observable<Integer> observable = Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(ObservableEmitter<Integer> e) throws Exception {
-                e.onNext(1);
+                e.onNext(1000);
             }
         });
-
-        observable.map(new Function<Integer, String>() {
+        observable.observeOn(Schedulers.io())  //这一步指定了下面map操作符调用的Function函数执行的线程
+                .map(new Function<Integer, String>() {
                     @Override
                     public String apply(Integer integer) throws Exception {
-                        return "the result with map is:" + integer;
+                        //integer是observable传过来的学号，假设这里已经从后台查到了对应的学生名称
+                        String name = integer.toString();
+                        return "student name is:" + name;
                     }})
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<String>() {
@@ -86,12 +88,14 @@ public class MapFragment extends Fragment {
                 .flatMap(new Function<String, ObservableSource<String>>() {
                     @Override
                     public ObservableSource<String> apply(String s) throws Exception {
+                        //假设这里已经从后台获取到课程信息，然后存入list
                         List<String> list = new ArrayList<>();
-                        list.add("Tom's first lesson is: English.");
-                        list.add("Tom's second lesson is: Math.");
-                        list.add("Tom's third lesson is: History.");
+                        list.add(s + " first lesson is: English.");
+                        list.add(s + " second lesson is: Math.");
+                        list.add(s + " third lesson is: History.");
                         Log.d(TAG, "current time is:" + System.currentTimeMillis() +
                                 ". flatMap in thread:" + Thread.currentThread().getName());
+                        //这里将这个list作为参数创建一个Observable，delay表示延时100毫秒将数据发送给观察者Observer
                         return Observable.fromIterable(list).delay(100, TimeUnit.MILLISECONDS);
                     }
                 }).observeOn(AndroidSchedulers.mainThread())
