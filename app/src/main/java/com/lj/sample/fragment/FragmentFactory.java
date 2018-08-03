@@ -8,6 +8,8 @@ public class FragmentFactory {
         switch (position) {
             case 0:
                 return new MapFragment();
+            case 1:
+                return new BufferFragment();
             default:
                 return null;
         }

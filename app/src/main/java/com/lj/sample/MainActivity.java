@@ -18,7 +18,7 @@ import io.reactivex.disposables.Disposable;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String[] RXJAVA_OPERATOR= new String[]{"map & flatmap"};
+    private static final String[] RXJAVA_OPERATOR= new String[]{"map & flatmap", "buffer"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
